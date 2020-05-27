@@ -11,7 +11,10 @@ function extract_date(date){
 }
 
 // Calculates days left until due date
-function calculate_days_left(start_date, end_date){}
+function calculate_days_left(start_date, end_date){
+    const seconds_left = extract_date(end_date) - extract_date(start_date);
+    return Math.round(seconds_left / 1000 / 60 / 60 / 24);
+}
 
 // Creates HTML for alerts
 function task_html(){}
@@ -27,8 +30,11 @@ function create_alerts(event){
     const data = event.formData;
     const values = [...data.values()];
     const task_name = values[0];
+    const today = extract_date(new Date());
     const due_date = new Date(values[1]+'T00:00:00');
-    //const days_left = calculate_days_left(today, due_date.value)
+    const days_left = calculate_days_left(today, due_date)
+    console.log(days_left);
+    console.log(task_name);
 }
 
 const form = document.forms[0];
