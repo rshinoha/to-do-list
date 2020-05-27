@@ -20,7 +20,9 @@ function calculate_days_left(start_date, end_date){
 function task_html(){}
 
 // Puts task name and due date into task object and puts into tasks list
-function get_task(){}
+function get_task(task_name, days_left){
+    tasks.push({"task_name": task_name, "days_left": days_left});
+}
 
 // Removes task from task list
 function remove_task(){}
@@ -32,9 +34,12 @@ function create_alerts(event){
     const task_name = values[0];
     const today = extract_date(new Date());
     const due_date = new Date(values[1]+'T00:00:00');
-    const days_left = calculate_days_left(today, due_date)
-    console.log(days_left);
-    console.log(task_name);
+    const days_left = calculate_days_left(today, due_date);
+    if(days_left > 0){
+        get_task(task_name, days_left);
+        console.log(tasks);
+    }
+    // Think of error messages to post if invalid date is used
 }
 
 const form = document.forms[0];
