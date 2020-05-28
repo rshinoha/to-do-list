@@ -17,7 +17,28 @@ function calculate_days_left(start_date, end_date){
 }
 
 // Creates HTML for alerts
-function task_html(){}
+function task_html(task_list){
+    const output = [];
+    task_list.forEach(
+        (task, taskNum) => {
+            let color = "";
+            if (task.days_left < 3){
+                color = "danger";
+            }
+            else if (task.days_left < 7){
+                color = "warning";
+            }
+            else {
+                color = "secondary";
+            }
+            console.log(color);
+            output.push(
+                `<div class="alert alert-${color} alert-dismissible fade show" role="alert" id="task${taskNum}"><p>${task.task_name}</p><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p>${task.days_left} day(s)</p></div>`
+            );
+        }
+    );
+    return output;
+}
 
 // Puts task name and due date into task object and puts into tasks list
 function get_task(task_name, days_left){
@@ -37,9 +58,9 @@ function create_alerts(event){
     const days_left = calculate_days_left(today, due_date);
     if(days_left > 0){
         get_task(task_name, days_left);
-        console.log(tasks);
     }
     // Think of error messages to post if invalid date is used
+    all_tasks.innerHTML = task_html(tasks);
 }
 
 const form = document.forms[0];
