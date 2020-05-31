@@ -1,6 +1,7 @@
 // All DOMs
 const submit_button = document.querySelector('#submit');
 const all_tasks = document.querySelector('#all_tasks');
+const min_date = document.querySelector('#date_field');
 
 // Stores all tasks
 let tasks = [];
@@ -8,6 +9,27 @@ let tasks = [];
 // Isolates the date from the Date data type
 function extract_date(date){
     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+// Returns Date object as string
+function date_string(date){
+    const mm = date.getMonth() + 1;
+    const dd = date.getDate();
+    let month_str;
+    let date_str;
+    if (mm < 10){
+        month_str = '0' + String(mm);
+    }
+    else {
+        month_str = String(mm);
+    }
+    if (dd < 10){
+        date_str = '0' + String(dd);
+    }
+    else {
+        date_str = String(dd);
+    }
+    return String(date.getFullYear()) + '-' + month_str + '-' + date_str;
 }
 
 // Calculates days left until due date
@@ -18,7 +40,7 @@ function calculate_days_left(start_date, end_date){
 
 // Creates HTML for alerts
 function task_html(){
-    const output = [];
+    let output = '';
     tasks.forEach(
         (task, taskNum) => {
             let color = "";
@@ -31,9 +53,7 @@ function task_html(){
             else {
                 color = "secondary";
             }
-            output.push(
-                `<div class="alert alert-${color} alert-dismissible fade show" role="alert" id="task${taskNum}"><p>${task.task_name}</p><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p>${task.days_left} day(s)</p></div>`
-            );
+            output += `<div class="alert alert-${color} alert-dismissible fade show mr-3" role="alert" id="task${taskNum}"><p class="mr-5 my-0">${task.task_name}</p><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p class="my-0">${task.days_left} day(s)</p></div>`;
         }
     );
     return output;
@@ -78,21 +98,21 @@ function remove_task(){
     tasks = incomplete_tasks;
 }
 
+const today = extract_date(new Date());
+let tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
+
+min_date.setAttribute("min", date_string(tomorrow));
+
 // Main function to populate task list
 function create_alerts(event){
     remove_task();
     const data = event.formData;
     const values = [...data.values()];
     const task_name = values[0];
-    const today = extract_date(new Date());
     const due_date = new Date(values[1]+'T00:00:00');
     const days_left = calculate_days_left(today, due_date);
-    if(days_left > 0){
-        get_task(task_name, days_left);
-    }
-    // Think of error messages to post if invalid date is used
-    
-    // Sorts tasks by days remaining
+    get_task(task_name, days_left);
     tasks = tasks.sort((a, b) => (a.days_left > b.days_left) ? 1 : -1);
     all_tasks.innerHTML = task_html(tasks);
 }
